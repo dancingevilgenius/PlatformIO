@@ -1,10 +1,12 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include <ArduinoJson.h>
 
 // --- Forward Declarations ---
 void navigateMenu(const String& direction);
-void sendResponseHeader(NetworkClient client);
-void sendWebPage(NetworkClient client);
-void clientDPad(NetworkClient client);
+void sendResponseHeader(WiFiClient client);
+void sendWebPage(WiFiClient client);
+void clientDPad(WiFiClient client);
 void handleClientRequest(String request);
 void handleRequestParamDirection(String request);
 
@@ -14,19 +16,14 @@ void handleRequestParamDirection(String request);
 // Original Espressif library version:  3.3.8
 // Original Adafruit Neopixel version: 1.15.5
 
-#include <Arduino.h>
-#include <WiFi.h>
-#include <Adafruit_NeoPixel.h>
-#include <ArduinoJson.h>
-
 // Network credentials Here
-const char* ssid     = "STDL5301";	// Change this for your project
-const char* password = "library30";	// Change this for your project
+const char* ssid     = "Kajeet SmartSpot 9E7F";	// Change this for your project
+const char* password = "smartspot4033";	// Change this for your project
 //const char* ssid     = "VERIZON-SM-G950U-DEA4";	// Change this for your project
 //const char* password = "6302201111";	// Change this for your project
 
 // Set web server port number to 80
-NetworkServer server(80);
+WiFiServer server(80);
 
 bool verbose = false; // Used to hide some of the less important web server connection properties.
 
@@ -130,7 +127,7 @@ void setup() {
 
 
 void loop() {
-  NetworkClient client = server.available();
+  WiFiClient client = server.available();
   if (!client) return;
 
   String request = "";
@@ -236,7 +233,7 @@ void loop() {
   client.stop();  
 }
 
-void sendResponseHeader(NetworkClient client) {
+void sendResponseHeader(WiFiClient client) {
     
     // Should not normally edit/remove these 4 lines
     client.println("HTTP/1.1 200 OK");
@@ -246,14 +243,14 @@ void sendResponseHeader(NetworkClient client) {
 
 }
 
-void sendWebPage(NetworkClient client){
+void sendWebPage(WiFiClient client){
 
   // Send your web page here.
   // In this case it is a simulated game controller DPad.
   clientDPad(client);
 }
 
-void clientDPad(NetworkClient client){
+void clientDPad(WiFiClient client){
 
 client.println("<!DOCTYPE html>");
 client.println("<html>");

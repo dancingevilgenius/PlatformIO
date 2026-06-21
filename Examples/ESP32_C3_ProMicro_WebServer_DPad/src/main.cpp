@@ -1,10 +1,11 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include <ArduinoJson.h>
 
-// --- Forward Declarations ---
 void navigateMenu(const String& direction);
-void sendResponseHeader(NetworkClient client);
-void sendWebPage(NetworkClient client);
-void clientDPad(NetworkClient client);
+void sendResponseHeader(WiFiClient client);
+void sendWebPage(WiFiClient client);
+void clientDPad(WiFiClient client);
 void handleClientRequest(String request);
 void handleRequestParamDirection(String request);
 void blink(int count, int interval, int wait_ms);
@@ -15,10 +16,6 @@ void blink(int count, int interval, int wait_ms);
 // Original Espressif library version:  3.3.8
 // Original Adafruit Neopixel version: 1.15.5
 
-#include <Arduino.h>
-#include <WiFi.h>
-#include <ArduinoJson.h>
-
 // Network credentials Here
 const char* ssid     = "STDL5301";	// Change this for your project
 const char* password = "library30";	// Change this for your project
@@ -26,12 +23,14 @@ const char* password = "library30";	// Change this for your project
 //const char* password = "6302201111";	// Change this for your project
 
 // Set web server port number to 80
-NetworkServer server(80);
+WiFiServer server(80);
 
 bool verbose = false; // Used to hide some of the less important web server connection properties.
 
-
-#define BUILTIN_LED 15 // ESP32-S2 Mini
+// Onboard LED (ESP32-C3 DevKit / Pro Micro use GPIO 8)
+#ifndef STATUS_LED
+#define STATUS_LED LED_BUILTIN
+#endif
 
 // ----------------------------
 // MENU SYSTEM (Hierarchical)
@@ -112,6 +111,8 @@ else if (direction == "down") {
 void setup() {
   Serial.begin(115200);
 
+  pinMode(STATUS_LED, OUTPUT);
+
   delay(2000); // Fixes problem that displays ONLY firmware debugging info.
   blink(1, 2000, 1000);
 
@@ -136,7 +137,7 @@ void setup() {
 
 
 void loop() {
-  NetworkClient client = server.available();
+  WiFiClient client = server.available();
   if (!client) return;
 
   String request = "";
@@ -242,7 +243,7 @@ void loop() {
   client.stop();  
 }
 
-void sendResponseHeader(NetworkClient client) {
+void sendResponseHeader(WiFiClient client) {
     
     // Should not normally edit/remove these 4 lines
     client.println("HTTP/1.1 200 OK");
@@ -252,14 +253,14 @@ void sendResponseHeader(NetworkClient client) {
 
 }
 
-void sendWebPage(NetworkClient client){
+void sendWebPage(WiFiClient client){
 
   // Send your web page here.
   // In this case it is a simulated game controller DPad.
   clientDPad(client);
 }
 
-void clientDPad(NetworkClient client){
+void clientDPad(WiFiClient client){
 
 client.println("<!DOCTYPE html>");
 client.println("<html>");
@@ -474,9 +475,9 @@ void handleRequestParamDirection(String request){
 
 void blink(int count, int interval, int wait_ms){
     for(int i=0 ; i<count ; i++){
-        digitalWrite(BUILTIN_LED, HIGH);
+        digitalWrite(STATUS_LED, HIGH);
         delay(interval);
-        digitalWrite(BUILTIN_LED, LOW);
+        digitalWrite(STATUS_LED, LOW);
         delay(interval);
     }
 
