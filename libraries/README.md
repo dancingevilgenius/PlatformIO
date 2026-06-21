@@ -45,6 +45,7 @@ Adjust the `extra_configs` path for project depth:
 | Project location | `extra_configs` path |
 |------------------|----------------------|
 | `Examples/MyProject/` | `../../platformio.shared.ini` |
+| `Examples/ESP32/MyProject/` | `../../../platformio.shared.ini` |
 | `Arduino/ESP32/MyProject/` | `../../../platformio.shared.ini` |
 | `Tutorials and Books/.../MyProject/` | `../../../platformio.shared.ini` |
 
