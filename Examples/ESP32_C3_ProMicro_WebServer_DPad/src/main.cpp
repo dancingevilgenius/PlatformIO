@@ -17,8 +17,8 @@ void blink(int count, int interval, int wait_ms);
 // Original Adafruit Neopixel version: 1.15.5
 
 // Network credentials Here
-const char* ssid     = "STDL5301";	// Change this for your project
-const char* password = "library30";	// Change this for your project
+const char* ssid     = "Kajeet SmartSpot 9E7F";	// Change this for your project
+const char* password = "smartspot4033";	// Change this for your project
 //const char* ssid     = "TheMandalorian";	// Change this for your project
 //const char* password = "6302201111";	// Change this for your project
 
