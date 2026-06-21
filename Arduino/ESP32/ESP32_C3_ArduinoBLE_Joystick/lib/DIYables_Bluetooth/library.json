@@ -1,0 +1,11 @@
+{
+  "name": "DIYables Bluetooth",
+  "version": "1.0.1",
+  "build": {
+    "srcFilter": [
+      "+<*>",
+      "-<platforms/DIYables_Esp32Bluetooth.cpp>",
+      "-<platforms/DIYables_ArduinoBLE.cpp>"
+    ]
+  }
+}
