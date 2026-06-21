@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ESP32 Control Panel</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #222;
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------
+   MESSAGEBOX SYSTEM
+------------------------------ */
+#message-container {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.message-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  margin-top: 10px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  font-size: 18px;
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  color: white;
+}
+
+.msg-info    { background: #007bff; }
+.msg-success { background: #28a745; }
+.msg-warning { background: #ffc107; color: black; }
+.msg-error   { background: #dc3545; }
+
+.message-icon {
+  font-size: 22px;
+}
+
+.message-box.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ------------------------------
+   DROPDOWN + TEXT FIELDS
+------------------------------ */
+#dropdown {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.status-field {
+  padding: 10px;
+  width: 200px;
+  background: #333;
+  border-radius: 6px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* ------------------------------
+   DPAD
+------------------------------ */
+#dpad-container {
+  margin-top: 20px;
+}
+
+.dbtn {
+  width: 70px;
+  height: 70px;
+  margin: 5px;
+  font-size: 20px;
+  border-radius: 10px;
+  background: #555;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.dbtn:active {
+  background: #888;
+}
+
+/* ------------------------------
+   8x8 GRID (centered)
+------------------------------ */
+#grid8x8 {
+  display: none;
+  margin-top: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  grid-template-rows: repeat(8, 40px);
+  gap: 4px;
+}
+
+.grid-cell {
+  width: 40px;
+  height: 40px;
+  background: #444;
+  border-radius: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MESSAGEBOX CONTAINER -->
+<div id="message-container"></div>
+
+<!-- DROPDOWN (centered) -->
+<div style="margin-top: 20px;">
+  <select id="dropdown" onchange="modeChanged()">
+    <option value="DPad">DPad</option>
+    <option value="8x8">8x8</option>
+    <option value="TBA">TBA</option>
+  </select>
+</div>
+
+<!-- TWO TEXT FIELDS IN SAME ROW -->
+<div id="status-row" style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+  <div class="status-field" id="hStatus">Setting</div>
+  <div class="status-field" id="vStatus">Value</div>
+</div>
+
+<!-- DPAD -->
+<div id="dpad-container">
+  <div><button class="dbtn" onclick="sendDirection('up')">▲</button></div>
+  <div>
+    <button class="dbtn" onclick="sendDirection('left')">◀</button>
+    <button class="dbtn" onclick="sendDirection('center')">●</button>
+    <button class="dbtn" onclick="sendDirection('right')">▶</button>
+  </div>
+  <div><button class="dbtn" onclick="sendDirection('down')">▼</button></div>
+</div>
+
+<!-- 8x8 GRID (centered) -->
+<div id="grid8x8">
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+/* ---------------------------------------------------------
+   MESSAGEBOX FUNCTION
+--------------------------------------------------------- */
+function showMessage(text, severity = "info") {
+  const container = document.getElementById("message-container");
+
+  const box = document.createElement("div");
+  box.className = `message-box msg-${severity}`;
+
+  const icon = document.createElement("span");
+  icon.className = "message-icon";
+
+  switch (severity) {
+    case "success": icon.innerText = "✔️"; break;
+    case "warning": icon.innerText = "⚠️"; break;
+    case "error":   icon.innerText = "❌"; break;
+    default:        icon.innerText = "ℹ️"; break;
+  }
+
+  const textNode = document.createElement("span");
+  textNode.innerText = text;
+
+  box.appendChild(icon);
+  box.appendChild(textNode);
+
+  container.appendChild(box);
+
+  setTimeout(() => box.classList.add("show"), 10);
+
+  setTimeout(() => {
+    box.classList.remove("show");
+    setTimeout(() => box.remove(), 300);
+  }, 3000);
+
+  box.addEventListener("click", () => {
+    box.classList.remove("show");
+    setTimeout(() => box.remove(), 300);
+  });
+}
+
+/* ---------------------------------------------------------
+   MODE SWITCHING (DPad <-> 8x8)
+--------------------------------------------------------- */
+function modeChanged() {
+  const mode = document.getElementById("dropdown").value;
+
+  const dpad = document.getElementById("dpad-container");
+  const grid = document.getElementById("grid8x8");
+  const statusRow = document.getElementById("status-row");
+
+  if (mode === "8x8") {
+    dpad.style.display = "none";
+    statusRow.style.display = "none";
+    grid.style.display = "flex";
+  } else {
+    dpad.style.display = "block";
+    statusRow.style.display = "flex";
+    grid.style.display = "none";
+  }
+}
+
+/* ---------------------------------------------------------
+   BUILD GRID CELLS
+--------------------------------------------------------- */
+const gridDiv = document.getElementById("grid");
+for (let i = 0; i < 64; i++) {
+  const cell = document.createElement("div");
+  cell.className = "grid-cell";
+  gridDiv.appendChild(cell);
+}
+
+function updateGrid(grid) {
+  const cells = document.querySelectorAll(".grid-cell");
+  let idx = 0;
+
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const val = grid[r][c];
+
+      if (val >= 10) {
+        const g = (val - 10) * 30;
+        cells[idx].style.background = `rgb(0, ${g}, 0)`;
+      } else if (val >= 0) {
+        const rcol = val * 30;
+        cells[idx].style.background = `rgb(${rcol}, 0, 0)`;
+      } else {
+        cells[idx].style.background = "#444";
+      }
+
+      idx++;
+    }
+  }
+}
+
+/* ---------------------------------------------------------
+   SEND DIRECTION
+--------------------------------------------------------- */
+function sendDirection(dir) {
+  fetch("/controller", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ direction: dir })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.horiz) document.getElementById("hStatus").innerText = data.horiz;
+    if (data.vert)  document.getElementById("vStatus").innerText = data.vert;
+
+    if (data.message) {
+      const sev = data.severity || "info";
+      showMessage(data.message, sev);
+    }
+  });
+}
+
+/* ---------------------------------------------------------
+   PERIODIC GRID UPDATE
+--------------------------------------------------------- */
+setInterval(() => {
+  if (document.getElementById("dropdown").value !== "8x8") return;
+
+  fetch("/controller", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestGrid: true })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.grid) updateGrid(data.grid);
+
+    if (data.message) {
+      const sev = data.severity || "info";
+      showMessage(data.message, sev);
+    }
+  });
+}, 500);
+</script>
+
+</body>
+</html>
