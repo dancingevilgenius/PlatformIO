@@ -212,14 +212,14 @@ void setupMotorDriver(){
 void setupI2CDevices() {
 
   
-  Wire1.begin();
+  Wire.begin();
 
 
   Serial.println("\nStart setupI2CDevices() ----------------------------");
 
   Serial.println("VL53L1X Qwiic Test");
 
-  if (distanceSensor.begin(Wire1) != 0) //Begin returns 0 on a good init
+  if (distanceSensor.begin(Wire) != 0) //Begin returns 0 on a good init
   {
     Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
     while (1)

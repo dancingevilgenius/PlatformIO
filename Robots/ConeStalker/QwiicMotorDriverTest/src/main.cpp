@@ -4,16 +4,6 @@
 //
 //  Pin 8 can be grounded to disable motor movement, for debugging.
 
-#ifdef SPI_HAS_TRANSACTION
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
-#elif
-  // use old Arduino SPI library syntax
-#endif
-
-
-//#include <SPI.h> // Added by Carlos 1/26
-
-#include <Arduino.h>
 #include <stdint.h>
 #include "SCMD.h"
 #include "SCMD_config.h" //Contains #defines for common SCMD register names and values

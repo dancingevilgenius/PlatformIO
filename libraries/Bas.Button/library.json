@@ -1,0 +1,27 @@
+{
+    "name": "Bas.Button",
+    "version": "1.2.1",
+    "description": "A simple button class that calls a callback function when pressed.",
+    "keywords": "button,callback",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/BasPaap/Bas.Button"
+    },
+    "dependencies":
+    {
+        "baspaap/Bas.CallbackCaller": "^1.0.0"
+    },
+    "authors":
+    [
+      {
+        "name": "Bas Paap",
+        "email": "baspaap@live.nl",
+        "maintainer": true
+      }
+    ],
+    "license": "MIT",
+
+    "frameworks": "arduino",
+    "platforms": "*"
+  }

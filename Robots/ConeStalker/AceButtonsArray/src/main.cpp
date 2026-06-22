@@ -11,7 +11,6 @@
  */
 
 #include <AceButton.h>
-void handleEvent(AceButton* button, uint8_t eventType, uint8_t buttonState);
 
 using namespace ace_button;
 

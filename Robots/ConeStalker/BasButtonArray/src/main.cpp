@@ -10,9 +10,9 @@
 void onButtonPressed();
 
 
-const int buttonPin0 = D0;  // the number of the pushbutton pin. ov:2
-const int buttonPin1 = D1;  // the number of the pushbutton pin. ov:2
-const int buttonPin2 = D2;  // the number of the pushbutton pin. ov:2
+const int buttonPin0 = 2;
+const int buttonPin1 = 3;
+const int buttonPin2 = 4;
 const unsigned long debounceDelay = 15; // Amount of milliseconds to debounce
 
 Bas::Button button1{ buttonPin0, debounceDelay, Bas::Button::LogLevel::none };    // Instantiate a Button object with the correct pin and debouncedelay, and set the log level to none to prevent it from writing event logs to Serial.

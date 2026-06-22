@@ -14,7 +14,7 @@
 
   Are you getting weird readings? Be sure the vacuum tape has been removed from the sensor.
 */
-#include <Arduino.h>
+
 #include <Wire.h>
 #include "SparkFun_VL53L1X.h" //Click here to get the library: http://librarymanager/All#SparkFun_VL53L1X
 

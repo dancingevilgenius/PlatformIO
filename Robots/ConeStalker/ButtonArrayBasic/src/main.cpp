@@ -2,9 +2,9 @@
 
 #include <Button.h>
 
-Button button1(D0); // 2 Connect your button between pin 2 and GND
-Button button2(D1); // 3 Connect your button between pin 3 and GND
-Button button3(D2); // 4 Connect your button between pin 4 and GND
+Button button1(2); // Connect your button between pin 2 and GND
+Button button2(3); // Connect your button between pin 3 and GND
+Button button3(4); // Connect your button between pin 4 and GND
 
 void setup() {
 	button1.begin();

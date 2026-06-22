@@ -71,5 +71,11 @@ Project-specific libraries can still live in that project's `lib/` folder.
 | `SparkFun_Qwiic_Alphanumeric_Display_Arduino_Library/` | Qwiic alphanumeric display |
 | `Adafruit_TCS34725/` | RGB color line sensor |
 | `SparkFun_VL53L1X_4m_Laser_Distance_Sensor/` | VL53L1X ToF distance (ConeStalker / Rev4) |
+| `NewPing/` | Ultrasonic ranging (ConeStalker NewPing3Sensors) |
+| `Bas.Button/` | Debounced button callbacks (ConeStalker BasButtonArray) |
+| `Bas.CallbackCaller/` | Dependency of Bas.Button |
+| `Adafruit_GFX_Library/` | OLED graphics (ConeStalker ZioUltrasonicSensor) |
+| `Adafruit_SSD1306/` | SSD1306 OLED driver |
+| `Adafruit_BusIO/` | I2C/SPI helpers for Adafruit libs |
 
 Projects with `extends = common` pick these up automatically via `lib_extra_dirs`.

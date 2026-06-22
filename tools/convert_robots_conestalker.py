@@ -12,18 +12,14 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = Path(r"D:\Workspaces\Arduino\Robots\ConeStalker")
 DEST = REPO / "Robots" / "ConeStalker"
 
-# SparkFun RedBoard Turbo (SAMD51) — Wire1, D0-Dn pins used across ConeStalker / Rev4 builds
-REDBOARD_TURBO = {
-    "env": "sparkfun-redboard-turbo",
-    "platform": "atmelsam",
-    "board": "sparkfun_redboard_turbo",
+# Arduino Uno R4 WiFi — Qwiic on Wire (SDA/SCL)
+UNO_R4_WIFI = {
+    "env": "uno-r4-wifi",
+    "platform": "renesas-ra",
+    "board": "uno_r4_wifi",
 }
 
-ADAFRUIT_OLED = [
-    "https://github.com/adafruit/Adafruit-GFX-Library.git",
-    "https://github.com/adafruit/Adafruit_SSD1306.git",
-    "https://github.com/adafruit/Adafruit_BusIO.git",
-]
+ADAFRUIT_OLED: list[str] = []  # vendored: Adafruit_GFX_Library, Adafruit_SSD1306, Adafruit_BusIO
 
 GITIGNORE = """.pio
 .vscode/.browse.c_cpp.db*
@@ -34,39 +30,39 @@ GITIGNORE = """.pio
 
 PROJECTS: dict[str, dict] = {
     "ZioUltrasonicSensor": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": ADAFRUIT_OLED,
     },
     "Rev4_VL53L1X_ReadDistance": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": [],
     },
     "QwiicMotorDriverTest": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": [],
     },
     "NewPing3Sensors": {
-        **REDBOARD_TURBO,
-        "lib_deps": ["https://github.com/livetinker/NewPing.git"],
+        **UNO_R4_WIFI,
+        "lib_deps": [],  # vendored NewPing
     },
     "MD_Lidar": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": [],
     },
     "ButtonArrayBasic": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": ["https://github.com/madleech/Button.git"],
     },
     "ButtonArray": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": [],
     },
     "BasButtonArray": {
-        **REDBOARD_TURBO,
-        "lib_deps": ["https://github.com/BasPaap/Bas.Button.git"],
+        **UNO_R4_WIFI,
+        "lib_deps": [],  # vendored Bas.Button + Bas.CallbackCaller
     },
     "AceButtonsArray": {
-        **REDBOARD_TURBO,
+        **UNO_R4_WIFI,
         "lib_deps": ["https://github.com/bxparks/AceButton.git"],
     },
 }
@@ -150,7 +146,7 @@ def write_platformio_ini(project_dir: Path, name: str, cfg: dict) -> None:
         f"; {name}",
         f"; Source: Robots/ConeStalker/{name}",
         "; https://github.com/dancingevilgenius/Robots.git",
-        "; Board: SparkFun RedBoard Turbo (SAMD51) — Wire1 / Rev4 ConeStalker hardware",
+        "; Board: Arduino Uno R4 WiFi",
         "",
         "[platformio]",
         "extra_configs = ../../../platformio.shared.ini",
@@ -239,7 +235,7 @@ PlatformIO ports of [Robots/ConeStalker](https://github.com/dancingevilgenius/Ro
 
 Each subfolder is a standalone PlatformIO project (`platformio.ini`, `src/main.cpp`).
 
-Target board: **SparkFun RedBoard Turbo** (`sparkfun_redboard_turbo`, SAMD51) — matches Rev4/ConeStalker hardware with `Wire1` and `D0`–style pins.
+Target board: **Arduino Uno R4 WiFi** (`uno_r4_wifi`, Renesas RA) — Qwiic sensors on `Wire` (SDA/SCL).
 
 Shared local libraries in the repo-root `libraries/` folder:
 
