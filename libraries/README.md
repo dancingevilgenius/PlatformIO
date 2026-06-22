@@ -49,7 +49,27 @@ Adjust the `extra_configs` path for project depth:
 | `Examples/RP2040/MyProject/` | `../../../platformio.shared.ini` |
 | `Examples/STM32/MyProject/` | `../../../platformio.shared.ini` |
 | `Examples/Rev4/MyProject/` | `../../../platformio.shared.ini` |
+| `Examples/Rev3/MyProject/` | `../../../platformio.shared.ini` |
+| `Robots/MiniSumo/MyProject/` | `../../../platformio.shared.ini` |
+| `Robots/LineFollower/MyProject/` | `../../../platformio.shared.ini` |
+| `Robots/ConeStalker/MyProject/` | `../../../platformio.shared.ini` |
 | `Arduino/ESP32/MyProject/` | `../../../platformio.shared.ini` |
 | `Tutorials and Books/.../MyProject/` | `../../../platformio.shared.ini` |
 
 Project-specific libraries can still live in that project's `lib/` folder.
+
+## Vendored libraries (repo root `libraries/`)
+
+| Folder | Used for |
+|--------|----------|
+| `Serial_Controlled_Motor_Driver/` | SparkFun SCMD (custom fork; not from Registry) |
+| `FS_MX1508/` | MX1508 / DRV8871 motor driver |
+| `MedianFilterLib2/` | Median filter for distance sensors |
+| `Fork_of_PS3_Controller_Host/` | PS3 controller over Bluetooth (ESP32) |
+| `emakefun_line_tracker_v3/` | Acebott / I2C five-line tracker |
+| `HUSKYLENS/` | DFRobot HuskyLens vision sensor |
+| `SparkFun_Qwiic_Alphanumeric_Display_Arduino_Library/` | Qwiic alphanumeric display |
+| `Adafruit_TCS34725/` | RGB color line sensor |
+| `SparkFun_VL53L1X_4m_Laser_Distance_Sensor/` | VL53L1X ToF distance (ConeStalker / Rev4) |
+
+Projects with `extends = common` pick these up automatically via `lib_extra_dirs`.
